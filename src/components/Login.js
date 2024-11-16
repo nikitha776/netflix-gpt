@@ -2,9 +2,11 @@ import React from 'react'
 import Header from './Header';
 import { useState, useRef } from 'react';
 import { checkValidData } from '../utils/validate'
-import { createUserWithEmailAndPassword , signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword ,updateProfile} from "firebase/auth";
 import { auth } from '../utils/firebase'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux';
+import { addUser } from '../utils/userSlice';
 
 const Login = () => {
 
@@ -12,9 +14,11 @@ const Login = () => {
   const [message, setMessage] = useState(null);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const email = useRef(null);
   const password = useRef(null);
+  const displayName = useRef(null);
 
   const toggleIsSignIn = () => {
     setIsSignIn(!isSignIn);
@@ -31,6 +35,15 @@ const Login = () => {
         .then((userCredential) => {
           const user = userCredential.user;
           console.log(user);
+          updateProfile(user, {
+            displayName: displayName.current.value, photoURL: "https://www.partysuppliesindia.com/cdn/shop/products/A2_33_c020ee18-0c82-4dc1-b16d-c90a64707b20.jpg?v=1635508143&width=1500"
+          }).then(() => {
+            const { uid , email , displayName , photoURL } = auth.currentUser;
+            dispatch(addUser({ uid : uid, email : email, displayName : displayName, photoURL : photoURL}));
+            navigate("/browse");
+          }).catch((error) => {
+            
+          });
           navigate('/browse');
         })
         .catch((error) => {
@@ -61,7 +74,7 @@ const Login = () => {
       </div>
       <form onSubmit={(e) => e.preventDefault()} className="py-4 absolute bg-black text-white w-3/12 my-[100px] mx-auto right-0 left-0 px-10 opacity-85 rounded-lg pr-12">
         <h1 className="text-4xl my-4 font-bold mb-6">{isSignIn ? "Sign In" : "Sign Up"}</h1>
-        {!isSignIn && <input type="text" placeholder="Full Name" className="bg-black border border-gray-500 p-4 m-2 w-[100%] my-4 rounded-lg" />}
+        {!isSignIn && <input ref={displayName} type="text" placeholder="Full Name" className="bg-black border border-gray-500 p-4 m-2 w-[100%] my-4 rounded-lg" />}
         <input ref={email} type="text" placeholder="Email or mobile number" className="bg-black border border-gray-500 p-4 m-2 w-[100%] my-4 rounded-lg" />
         <input ref={password} type="password" placeholder="Password" className="bg-black border border-gray-500 p-4 m-2 my-4 w-[100%] rounded-lg" />
         <p className="text-red-700 font-semibold px-2">{message}</p>
