@@ -4,16 +4,15 @@ import { useState, useRef } from 'react';
 import { checkValidData } from '../utils/validate'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword ,updateProfile} from "firebase/auth";
 import { auth } from '../utils/firebase'
-import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux';
 import { addUser } from '../utils/userSlice';
+import { AVATAR_URL } from '../utils/constants';
 
 const Login = () => {
 
   const [isSignIn, setIsSignIn] = useState(true);
   const [message, setMessage] = useState(null);
 
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const email = useRef(null);
@@ -36,15 +35,13 @@ const Login = () => {
           const user = userCredential.user;
           console.log(user);
           updateProfile(user, {
-            displayName: displayName.current.value, photoURL: "https://www.partysuppliesindia.com/cdn/shop/products/A2_33_c020ee18-0c82-4dc1-b16d-c90a64707b20.jpg?v=1635508143&width=1500"
+            displayName: displayName.current.value, photoURL: AVATAR_URL
           }).then(() => {
             const { uid , email , displayName , photoURL } = auth.currentUser;
             dispatch(addUser({ uid : uid, email : email, displayName : displayName, photoURL : photoURL}));
-            navigate("/browse");
           }).catch((error) => {
             
           });
-          navigate('/browse');
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -56,7 +53,6 @@ const Login = () => {
         .then((userCredential) => {
           const user = userCredential.user;
           console.log(user);
-          navigate('/browse');
         })
         .catch((error) => {
           const errorCode = error.code;
