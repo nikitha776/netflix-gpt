@@ -6,7 +6,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword ,updateProfi
 import { auth } from '../utils/firebase'
 import { useDispatch } from 'react-redux';
 import { addUser } from '../utils/userSlice';
-import { AVATAR_URL } from '../utils/constants';
+import { AVATAR_URL , BG_URL } from '../utils/constants';
 
 const Login = () => {
 
@@ -33,7 +33,7 @@ const Login = () => {
       createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
         .then((userCredential) => {
           const user = userCredential.user;
-          console.log(user);
+          // console.log(user);
           updateProfile(user, {
             displayName: displayName.current.value, photoURL: AVATAR_URL
           }).then(() => {
@@ -52,7 +52,7 @@ const Login = () => {
       signInWithEmailAndPassword(auth, email.current.value, password.current.value)
         .then((userCredential) => {
           const user = userCredential.user;
-          console.log(user);
+          // console.log(user);
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -66,7 +66,7 @@ const Login = () => {
     <div>
       <Header />
       <div className="absolute">
-        <img src="https://assets.nflxext.com/ffe/siteui/vlv3/81d64f3c-9627-4741-8f74-422bf35f9f1d/web/IN-en-20241104-TRIFECTA-perspective_55263ea2-af7f-40ed-9cf0-7029a9b9baf4_large.jpg" alt="bgimage" className="w-[100%]" />
+        <img src={BG_URL} alt="bgimage" className="w-[100%]" />
       </div>
       <form onSubmit={(e) => e.preventDefault()} className="py-4 absolute bg-black text-white w-3/12 my-[100px] mx-auto right-0 left-0 px-10 opacity-85 rounded-lg pr-12">
         <h1 className="text-4xl my-4 font-bold mb-6">{isSignIn ? "Sign In" : "Sign Up"}</h1>
